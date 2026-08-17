@@ -1,0 +1,38 @@
+<div th:fragment="content">
+
+    <div class="grid pb-5">
+        <div>
+            <a href="/plugin/timer/doc" role="button" class="secondary">Documentation</a>
+        </div>
+        <div style="text-align: right;">
+            <button onclick="location.reload();">Refresh</button>
+        </div>
+    </div>
+
+    <div>
+        <h3>
+            Tasks
+        </h3>
+
+        <table class="pt-2">
+            <thead>
+            <tr>
+                <th>Id</th>
+                <th>Name</th>
+                <th>Delay</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="info : ${infoList}">
+                <td th:text="${info.id}">Id</td>
+                <td th:text="${info.name}">Name</td>
+                <td th:text="${info.delay}">Delay</td>
+            </tr>
+            <tr th:if="${infoList.isEmpty()}">
+                <td colspan="4" style="text-align: center">Nothing to display</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+</div>

@@ -1,0 +1,40 @@
+<div th:fragment="content">
+
+    <div class="grid pb-5">
+        <div>
+            <a href="/plugin/db/doc" role="button" class="secondary">Документація</a>
+        </div>
+        <div style="text-align: right;">
+            <button onclick="location.reload();">Оновити</button>
+        </div>
+    </div>
+
+    <div>
+        <h3>
+            Data Sources
+        </h3>
+
+        <table class="pt-2">
+            <thead>
+            <tr>
+                <th>Ідентифікатор</th>
+                <th>Драйвер</th>
+                <th>Активні підкл.</th>
+                <th>Неактивні підкл.</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="info : ${infoList}">
+                <td th:text="${info.id}">Id</td>
+                <td th:text="${info.driverClassName}">Driver</td>
+                <td th:text="${info.activeConnections}">Active Con.</td>
+                <td th:text="${info.idleConnections}">Idle Con.</td>
+            </tr>
+            <tr th:if="${infoList.isEmpty()}">
+                <td colspan="4" style="text-align: center">Нічого немає</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+</div>

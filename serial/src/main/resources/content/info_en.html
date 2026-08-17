@@ -1,0 +1,40 @@
+<div th:fragment="content">
+
+    <div class="grid pb-5">
+        <div>
+            <a href="/plugin/serial/doc" role="button" class="secondary">Documentation</a>
+        </div>
+        <div style="text-align: right;">
+            <button onclick="location.reload();">Refresh</button>
+        </div>
+    </div>
+
+    <div>
+        <h3>
+            Devices
+        </h3>
+
+        <table class="pt-2">
+            <thead>
+            <tr>
+                <th>Id</th>
+                <th>Port</th>
+                <th>System Port Name</th>
+                <th>Connected</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="info : ${infoList}">
+                <td th:text="${info.deviceId}">Device Id</td>
+                <td th:text="${info.port}">Port</td>
+                <td th:text="${info.systemPortName}">System Port Name</td>
+                <td th:text="${info.connected}">Connected</td>
+            </tr>
+            <tr th:if="${infoList.isEmpty()}">
+                <td colspan="4" style="text-align: center">Nothing to display</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+</div>

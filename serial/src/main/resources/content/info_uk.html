@@ -1,0 +1,40 @@
+<div th:fragment="content">
+
+    <div class="grid pb-5">
+        <div>
+            <a href="/plugin/serial/doc" role="button" class="secondary">Документація</a>
+        </div>
+        <div style="text-align: right;">
+            <button onclick="location.reload();">Оновити</button>
+        </div>
+    </div>
+
+    <div>
+        <h3>
+            Пристрої
+        </h3>
+
+        <table class="pt-2">
+            <thead>
+            <tr>
+                <th>Ідентифікатор</th>
+                <th>Порт</th>
+                <th>Системний порт</th>
+                <th>Підключений</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="info : ${infoList}">
+                <td th:text="${info.deviceId}">Device Id</td>
+                <td th:text="${info.port}">Port</td>
+                <td th:text="${info.systemPortName}">System Port Name</td>
+                <td th:text="${info.connected}">Connected</td>
+            </tr>
+            <tr th:if="${infoList.isEmpty()}">
+                <td colspan="4" style="text-align: center">Немає зареєстрованих пристроїв</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+</div>
