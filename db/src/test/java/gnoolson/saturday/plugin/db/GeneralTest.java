@@ -43,7 +43,7 @@ public class GeneralTest {
 
         LuaModuleFactoryProvider luaModuleFactoryProvider = new LuaModuleFactoryProviderImpl();
         LuaModuleFactory luaModuleFactory = luaModuleFactoryProvider.getFactory();
-        DBLuaModule dbLuaModule = (DBLuaModule) luaModuleFactory.getInstance();
+        DBLuaModule dbLuaModule = (DBLuaModule) luaModuleFactory.getInstance("SCRIPT_ID");
 
         FunctionalityFactoryProvider functionalityFactoryProvider = new FunctionalityFactoryProviderImpl();
         functionalityFactoryProvider.setup(dbPlugin);
@@ -67,7 +67,7 @@ public class GeneralTest {
 
     private Object executeQuery(ConnectionLuaTable connectionLuaTable) {
         ConnectionLuaTable.QueryFunction queryFunction = new ConnectionLuaTable.QueryFunction();
-        ResultSetLuaTable resultSetLuaTable = (ResultSetLuaTable) queryFunction.call(connectionLuaTable, LuaString.valueOf("SHOW DATABASES"));
+        ResultSetLuaTable resultSetLuaTable = (ResultSetLuaTable) queryFunction.call(connectionLuaTable, LuaString.valueOf("PRAGMA database_list;"));
 
         return LuaTypeConverter.toObject(resultSetLuaTable);
     }

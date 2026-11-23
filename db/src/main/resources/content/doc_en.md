@@ -1,19 +1,19 @@
 <div class="pb-5">
-    <a href="/plugin/db" role="button" class="secondary">Data Sources</a>
+    <a href="/plugin/db">Data Sources</a>
 </div>
 
-The `db` module is used to work with databases.
+The `db` module is used to interact with databases.
 
-Before using the module, you must obtain or create a `DataSource` instance by calling the `getOrCreateDataSource()` function and providing:
+Before you begin, you need to obtain or create an instance of the `DataSource` class. To do this, call the `getOrCreateDataSource()` function and pass the following arguments:
 
-- the `DataSource` identifier (used as the cache key);
-- the path to a `*.properties` file containing the connection settings.
+- The `DataSource` identifier (used as a cache key);
+- The path to a `*.properties` file containing connection parameters.
 
-The created `DataSource` is cached, so subsequent calls with the same identifier return the same instance.
+Once created, the `DataSource` is cached, so subsequent calls with the same identifier will return the exact same object.
 
-Closing a `DataSource` is optional. As long as **Saturday** is running, all created `DataSource` instances are stored inside the Plugin and can be reused by other Scripts.
+Closing the `DataSource` is optional. As long as **Saturday** is running, all created `DataSource` instances are retained within the plugin and can be reused by other scripts.
 
-To execute SQL statements, obtain a `Connection` instance from the `DataSource`. The following operations are available:
+To execute SQL queries, you must acquire a `Connection` object from the `DataSource`. With a connection, you can perform the following operations:
 
 - `query`
 - `update`
@@ -21,67 +21,64 @@ To execute SQL statements, obtain a `Connection` instance from the `DataSource`.
 - `rollback`
 - `close`
 
-`Connection` instances are obtained from the `DataSource` connection pool (`org.apache.commons.dbcp2.BasicDataSource`) and are reused by the system.
+`Connection` objects are retrieved from the `DataSource` connection pool (powered by `org.apache.commons.dbcp2.BasicDataSource`) and are recycled by the system.
 
-After finishing your work, it is recommended to call `close()`. If you do not, the connection will be automatically returned to the pool when the Script finishes execution.
+After finishing your work with a `Connection`, you must call `close()` to release it (even if you omit this step, the connection will be automatically returned to the pool once the script finishes execution).
 
-##### Example
+## Example
 ```lua
 local DB = require("db")
 
--- returns a DataSource (table)
+-- Retrieve a DataSource (table)
 local dataSource = DB.getOrCreateDataSource(
-"mariadb",
-"file:./plugins/db/mariadb.properties"
+    "mariadb",
+    "file:./plugins/db/mariadb.properties"
 )
 
 --[[
-# Contents of mariadb.properties
+# Contents of the mariadb.properties file
 
-db.driver_path=file:/data/projects/java/saturday/lib/mariadb-java-client-3.5.5.jar
+db.driver_path=file:/data/projects/java/saturday/plugins/db/mariadb-java-client-3.5.5.jar
 db.driver_class_name=org.mariadb.jdbc.Driver
 db.jdbc_url=jdbc:mariadb://localhost:3306/
 db.username=admin
 db.password=root
 ]]
 
--- getConnection(transactionLevel) accepts one of the following
--- transaction isolation levels (support depends on the database):
+-- The getConnection(transactionLevel) function accepts one of the following transaction isolation levels
+-- (support depends on the specific DBMS):
 --
--- "READ_UNCOMMITTED" - allows reading uncommitted data;
--- "READ_COMMITTED"   - allows reading only committed data;
--- "REPEATABLE_READ"  - guarantees the same result for repeated reads;
--- "SERIALIZABLE"     - the highest isolation level.
+-- "READ_UNCOMMITTED" - Allows reading uncommitted data;
+-- "READ_COMMITTED"   - Allows reading only committed data;
+-- "REPEATABLE_READ"  - Guarantees the same result for repeated reads;
+-- "SERIALIZABLE"     - The highest level of isolation.
 --
--- The default isolation level is "REPEATABLE_READ".
+-- The default level is "REPEATABLE_READ".
 
 local connection = dataSource:getConnection()
 
--- update data
-local updatedRows1 =
-connection:update("CREATE DATABASE IF NOT EXISTS my_database")
+-- Updating data
+local updatedRows1 = connection:update("CREATE DATABASE IF NOT EXISTS my_database")
 
-local updatedRows2 =
-connection:update("CREATE TABLE IF NOT EXISTS my_database.users (id INTEGER PRIMARY KEY NOT NULL AUTO_INCREMENT, name TEXT, age INTEGER)")
+local updatedRows2 = connection:update("CREATE TABLE IF NOT EXISTS my_database.users (id INTEGER PRIMARY KEY NOT NULL AUTO_INCREMENT, name TEXT, age INTEGER)")
 
-local updatedRows3 =
-connection:update("INSERT INTO my_database.users (name, age) VALUES ('root', 35)")
+local updatedRows3 = connection:update("INSERT INTO my_database.users (name, age) VALUES ('root', 35)")
 
 connection:commit()
 -- connection:rollback()
 
--- executes a SELECT query; returns a ResultSet (table)
+-- Executing a SELECT query; returns a ResultSet (table)
 local result = connection:query("SELECT * FROM my_database.users")
 
 local user = {
-name = result[1].name,
-age = result[1].age
+    name = result[1].name,
+    age = result[1].age
 }
 
--- closes the connection (optional)
+-- Closing the connection
 connection:close()
 
--- returns information about open DataSource instances (table, array)
+-- Information about open DataSources (table, array)
 local list = DB.info()
 
 Output.print(list)
@@ -89,17 +86,17 @@ Output.print(list)
 --[[
 {
 "1":{
-"idleConnections":1,
-"id":"mariadb",
-"driverClassName":"org.mariadb.jdbc.Driver",
-"jdbcUrl":"jdbc:mariadb://localhost:3306/",
-"activeConnections":0,
-"username":"admin",
-"driverPath":"file:/data/projects/java/saturday/lib/mariadb-java-client-3.5.5.jar"
+    "idleConnections":1,
+    "id":"mariadb",
+    "driverClassName":"org.mariadb.jdbc.Driver",
+    "jdbcUrl":"jdbc:mariadb://localhost:3306/",
+    "activeConnections":0,
+    "username":"admin",
+    "driverPath":"file:/data/projects/java/saturday/plugins/db/mariadb-java-client-3.5.5.jar"
 }
 }
 ]]
 
--- closes the DataSource
+-- Closing the DataSource
 DB.closeDataSource(dataSource.id)
 ```

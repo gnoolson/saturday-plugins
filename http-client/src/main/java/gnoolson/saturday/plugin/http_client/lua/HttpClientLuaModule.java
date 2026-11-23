@@ -1,6 +1,7 @@
 package gnoolson.saturday.plugin.http_client.lua;
 
 import gnoolson.luaj_utils.LuaArgUtils;
+import gnoolson.luaj_utils.LuaTableUtils;
 import gnoolson.luaj_utils.LuaTypeConverter;
 import gnoolson.saturday.plugin.http_client.*;
 import gnoolson.saturday_plugin_api.Functionality;
@@ -10,6 +11,7 @@ import org.luaj.vm2.LuaTable;
 import org.luaj.vm2.LuaValue;
 import org.luaj.vm2.lib.OneArgFunction;
 
+import java.util.HashMap;
 import java.util.Map;
 
 public class HttpClientLuaModule extends LuaModule {
@@ -53,14 +55,27 @@ public class HttpClientLuaModule extends LuaModule {
             LuaTable requestLuaTable = LuaArgUtils.getLuaTableFromFunctionArgs(requestLuaValue, 1, "request");
 
             URL url = URL.of(LuaArgUtils.getStringFromLuaTable(requestLuaTable, "request", "url"));
-            Method method = Method.of(LuaArgUtils.getStringFromLuaTable(requestLuaTable, "request", "method"));
-            Object headers = LuaTypeConverter.toObject(LuaArgUtils.getLuaTableFromLuaTable(requestLuaTable, "request", "headers"));
+            Method method = Method.valueOf(LuaArgUtils.getStringFromLuaTable(requestLuaTable, "request", "method"));
             int connectionTimeout = LuaArgUtils.getIntFromLuaTable(requestLuaTable, "request", "connectionTimeout");
+
+            LuaTable headersLuaTable = LuaArgUtils.getLuaTableFromLuaTable(requestLuaTable, "request", "headers");
+
+            Map<String, String> headersMap;
+            if(LuaTableUtils.isEmpty(headersLuaTable)){
+                headersMap = new HashMap<>(0);
+            } else {
+                Object obj = LuaTypeConverter.toObject(headersLuaTable);
+                if(obj instanceof Map) {
+                    headersMap = (Map)obj;
+                } else {
+                    throw new IllegalArgumentException("\"headers\" value must be a key-value map");
+                }
+            }
 
             Request request = new Request(
                     url,
                     method,
-                    (Map<String, String>) headers,
+                    headersMap,
                     convertLuaValueToBody(requestLuaTable.get("body")),
                     connectionTimeout
             );

@@ -1,5 +1,5 @@
 <div class="pb-5">
-    <a href="/plugin/serial" role="button" class="secondary">Devices</a>
+    <a href="/plugin/serial">Devices</a>
 </div>
 
 
@@ -10,28 +10,28 @@ To start working with the module, register a device and specify its connection p
 One of the main parameters is the serial port name. It can be specified explicitly (if it is known in advance, `port = "ttyUSB0"`) or determined automatically during device discovery (`port = Serial.SEARCH`).
 Automatic device discovery is recommended.
 
-###### Receiving Input Data
+### Receiving Input Data
 
 Input data can be handled in two ways:
-* automatically starting a handler Script when data is received (recommended);
+* automatically starting a handler script when data is received (recommended);
 * periodically checking for available data using a Schedule.
 
 Receiving data does not block the execution thread.
 After the first byte is received, data starts accumulating in the internal input buffer, and a timer for waiting for the end of data reception is started.
 
-The Script for processing input data will be started when at least one of the following conditions is met:
+The script for processing input data will be started when at least one of the following conditions is met:
 * a terminator is found (if specified);
 * the input buffer is completely filled;
 * the waiting time (`readTime`) has elapsed.
 
-Before the Script is started to process the input data, the contents of the input buffer are copied. The copy of the data can be retrieved using `Serial.popInputData()`.
+Before the script is started to process the input data, the contents of the input buffer are copied. The copy of the data can be retrieved using `Serial.popInputData()`.
 
 Data following the terminator, as well as data that does not fit into the input buffer, is moved to the beginning of the buffer and will be used during the next reception cycle.
 If the previous data has not been retrieved using `Serial.popInputData()` by the time the next reception cycle starts, it will be overwritten by new data.
 
 It is recommended to set the input buffer size to at least the maximum expected packet size and to use a terminator whenever the communication protocol allows it.
 
-###### Note
+### Note
 
 The `Serial` module does not guarantee that a complete packet will be received in a single call to `Serial.popInputData()`.
 It accumulates received bytes in the internal buffer and makes them available only after the reception is complete (when a terminator is found, the buffer is filled, or the waiting time expires).
@@ -40,7 +40,7 @@ It accumulates received bytes in the internal buffer and makes them available on
 
 
 
-##### Example
+## Example
 
 ```lua
 local Serial = require("serial")
@@ -58,11 +58,11 @@ local flag1 = Serial.registerDeviceIfAbsent("super_device", {
     readTime = 1000,                -- optional; maximum time to wait for the end of data reception (ms); default: 1000
     inputBufferLength = 1024,       -- optional; input buffer size (bytes); default: 1024
     inputTerminator = ByteArray.fromString("\r\n\r\n"):getJBytes(), -- optional; terminator; default: empty Java byte[]
-    dataReceivedEventHandler = Args.scriptId,         -- optional; id of the Script for processing input data; default: ""
-    searchDeviceEventHandler = Args.scriptId,         -- optional; id of the Script for device discovery; default: ""
-    deviceConnectedEventHandler = Args.scriptId,      -- optional; id of the Script for handling the connection event; default: ""
-    deviceDisconnectedEventHandler = Args.scriptId,   -- optional; id of the Script for handling the disconnection event; default: ""
-    connectionFailedEventHandler = Args.scriptId      -- optional; id of the Script for handling connection failures; default: ""
+    dataReceivedEventHandler = Args.scriptId,         -- optional; id of the script for processing input data; default: ""
+    searchDeviceEventHandler = Args.scriptId,         -- optional; id of the script for device discovery; default: ""
+    deviceConnectedEventHandler = Args.scriptId,      -- optional; id of the script for handling the connection event; default: ""
+    deviceDisconnectedEventHandler = Args.scriptId,   -- optional; id of the script for handling the disconnection event; default: ""
+    connectionFailedEventHandler = Args.scriptId      -- optional; id of the script for handling connection failures; default: ""
 })
 
 

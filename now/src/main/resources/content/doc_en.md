@@ -2,7 +2,7 @@ The `now` module is used to retrieve the current date and time.
 
 It is an alternative to the `os.time()` and `os.date()` functions when the **JseOsLib** library is unavailable.
 
-##### Example
+## Example
 ```lua
 local Now = require("now")
 

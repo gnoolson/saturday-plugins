@@ -6,22 +6,11 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 cd "$SCRIPT_DIR"
 
-cd ../cache
-mvn clean install
-cd ../db
-mvn clean install
-cd ../http-client
-mvn clean install
-cd ../json
-mvn clean install
-cd ../locker
-mvn clean install
-cd ../now
-mvn clean install
-cd ../telegram-bot
-mvn clean install
-cd ../timer
-mvn clean install
-cd ../serial
-mvn clean install
-cd ..
+
+PLUGINS_FOLDER=/data/project/java/saturday/plugins
+SELECTED_PLUGINS="cache db http-client json locker now timer serial event-bus"
+
+for SELECTED_PLUGIN in $SELECTED_PLUGINS; do
+    cd ../"$SELECTED_PLUGIN"/
+    mvn clean install
+done

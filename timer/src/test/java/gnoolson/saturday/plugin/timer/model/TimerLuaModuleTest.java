@@ -7,6 +7,7 @@ import gnoolson.saturday.plugin.timer.lua.TimerLuaModule;
 import gnoolson.saturday_plugin_api.ScriptLauncherGateway;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.luaj.vm2.LuaTable;
 import org.luaj.vm2.LuaValue;
 import org.luaj.vm2.Varargs;
 import org.mockito.Mockito;
@@ -47,6 +48,34 @@ public class TimerLuaModuleTest {
         verify(scriptLauncherGateway, timeout(200).times(1)).execute(
                 scriptId,
                 argsData
+        );
+    }
+
+    @Test
+    public void create_task_without_arguments() throws InterruptedException {
+        TimerLuaModule timerLuaModule = new TimerLuaModule();
+
+
+        ScriptLauncherGateway scriptLauncherGateway = Mockito.mock(ScriptLauncherGateway.class);
+
+        Timer timer = new TimerImpl(scriptLauncherGateway);
+        timerLuaModule.updateFunctionality(timer);
+
+        TimerLuaModule.CreateTaskFunction createTaskFunction = new TimerLuaModule.CreateTaskFunction(timerLuaModule);
+        String scriptId = UUID.randomUUID().toString();
+
+        Varargs arg = createTaskFunction.invoke(LuaValue.varargsOf(new LuaValue[]{
+                LuaValue.valueOf("test_task"),
+                LuaValue.valueOf(100),
+                LuaValue.valueOf(scriptId),
+                new LuaTable()
+        }));
+
+        UUID.fromString(arg.checkjstring(1));
+
+        verify(scriptLauncherGateway, timeout(200).times(1)).execute(
+                scriptId,
+                new HashMap<>(0)
         );
     }
 

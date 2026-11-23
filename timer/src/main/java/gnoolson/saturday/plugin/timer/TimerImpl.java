@@ -80,6 +80,23 @@ public class TimerImpl implements Timer {
     }
 
     @Override
+    public synchronized boolean existsByName(String name) {
+        for (Map.Entry<UUID, ScheduledFutureInfo> entry : schedules.entrySet()) {
+            ScheduledFutureInfo scheduledFutureInfo = entry.getValue();
+
+            if (scheduledFutureInfo.name.equals(name)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public boolean existsById(String taskId) {
+        return schedules.containsKey(UUID.fromString(taskId));
+    }
+
+    @Override
     public UUID createTask(String name, long delay, Callback callback) {
         cancelTaskByName(name);
         UUID id = UUID.randomUUID();

@@ -1,6 +1,6 @@
 The `json` module is used to serialize and deserialize data (convert a `table` to a JSON string and vice versa).
 
-##### Example
+## Example
 ```lua
 local JSON = require("json")
 

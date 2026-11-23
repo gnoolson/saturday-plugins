@@ -30,7 +30,7 @@ class SendRequestFunctionTest {
     );
     Request request = new Request(
             URL.of("https://google.com"),
-            Method.of("GET"),
+            Method.valueOf("GET"),
             new HashMap<String, String>() {{
                 put("content-type", "application/json");
                 put("custom-header", "qwerty");
@@ -77,5 +77,7 @@ class SendRequestFunctionTest {
 
         Mockito.verify(httpClientSpy).send(request);
     }
+
+
 
 }

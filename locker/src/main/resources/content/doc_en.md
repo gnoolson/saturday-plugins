@@ -1,12 +1,12 @@
-The `locker` module is used to prevent concurrent access to shared resources, since Scripts may execute in parallel and read or modify the same data.
+The `locker` module is used to prevent concurrent access to shared resources, since scripts may execute in parallel and read or modify the same data.
 
 This is achieved by locking execution threads while they are inside critical sections.
 
 The module uses optimistic locking and supports nested locks.
 
-If a lock is not released before the Script finishes execution, it is automatically released when the Script terminates.
+If a lock is not released before the script finishes execution, it is automatically released when the script terminates.
 
-##### Example
+## Example
 
 ```lua
 local Locker = require("locker")

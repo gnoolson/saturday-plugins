@@ -1,5 +1,5 @@
 <div class="pb-5">
-    <a href="/plugin/cache" role="button" class="secondary">Keys</a>
+    <a href="/plugin/cache">Keys</a>
 </div>
 
 
@@ -7,7 +7,7 @@ The `cache` module provides access to an in-memory temporary data store.
 
 Stored data is automatically removed after the specified storage time expires.
 
-##### Example
+## Example
 ```lua
 local Cache = require("cache")
 

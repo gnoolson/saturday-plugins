@@ -1,5 +1,5 @@
 <div class="pb-5">
-    <a href="/plugin/db" role="button" class="secondary">Data Sources</a>
+    <a href="/plugin/db">Data Sources</a>
 </div>
 
 Модуль `db` використовується для роботи з базами даних.
@@ -11,7 +11,7 @@
 
 Створений `DataSource` кешується, тому повторні виклики з однаковим ідентифікатором повертають той самий об'єкт.
 
-Закривати `DataSource` необов'язково. Поки працює **Saturday**, усі створені `DataSource` зберігаються всередині Плагіна та можуть повторно використовуватися іншими Сценаріями.
+Закривати `DataSource` необов'язково. Поки працює **Saturday**, усі створені `DataSource` зберігаються всередині плагіну та можуть повторно використовуватися іншими сценаріями.
 
 Для виконання SQL-запитів необхідно отримати об'єкт класу `Connection` із `DataSource`. Після цього можна виконувати такі операції:
 
@@ -23,9 +23,9 @@
 
 Об'єкти `Connection` отримуються з пулу підключень `DataSource` (використовується `org.apache.commons.dbcp2.BasicDataSource`) і повторно використовуються системою.
 
-Після завершення роботи підключення рекомендується викликати `close()`. Якщо цього не зробити, підключення буде автоматично повернуте до пулу після завершення роботи Сценарію.
+Після завершення роботи `Connection` треба викликати `close()` для його закриття (навіть якщо цього не зробити, підключення буде автоматично повернуте до пулу після завершення роботи сценарію).
 
-##### Приклад
+## Приклад
 ```lua
 local DB = require("db")
 
@@ -38,7 +38,7 @@ local dataSource = DB.getOrCreateDataSource(
 --[[
 # Вміст файлу mariadb.properties
 
-db.driver_path=file:/data/projects/java/saturday/lib/mariadb-java-client-3.5.5.jar
+db.driver_path=file:/data/projects/java/saturday/plugins/db/mariadb-java-client-3.5.5.jar
 db.driver_class_name=org.mariadb.jdbc.Driver
 db.jdbc_url=jdbc:mariadb://localhost:3306/
 db.username=admin
@@ -61,11 +61,9 @@ local connection = dataSource:getConnection()
 local updatedRows1 =
 connection:update("CREATE DATABASE IF NOT EXISTS my_database")
 
-local updatedRows2 =
-connection:update("CREATE TABLE IF NOT EXISTS my_database.users (id INTEGER PRIMARY KEY NOT NULL AUTO_INCREMENT, name TEXT, age INTEGER)")
+local updatedRows2 = connection:update("CREATE TABLE IF NOT EXISTS my_database.users (id INTEGER PRIMARY KEY NOT NULL AUTO_INCREMENT, name TEXT, age INTEGER)")
 
-local updatedRows3 =
-connection:update("INSERT INTO my_database.users (name, age) VALUES ('root', 35)")
+local updatedRows3 = connection:update("INSERT INTO my_database.users (name, age) VALUES ('root', 35)")
 
 connection:commit()
 -- connection:rollback()
@@ -78,7 +76,7 @@ name = result[1].name,
 age = result[1].age
 }
 
--- закриття підключення (необов'язково)
+-- закриття підключення
 connection:close()
 
 -- інформація про відкриті DataSource (table, array)
@@ -95,7 +93,7 @@ Output.print(list)
 "jdbcUrl":"jdbc:mariadb://localhost:3306/",
 "activeConnections":0,
 "username":"admin",
-"driverPath":"file:/data/projects/java/saturday/lib/mariadb-java-client-3.5.5.jar"
+"driverPath":"file:/data/projects/java/saturday/plugins/db/mariadb-java-client-3.5.5.jar"
 }
 }
 ]]

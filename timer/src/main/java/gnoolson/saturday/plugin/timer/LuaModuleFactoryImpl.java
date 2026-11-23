@@ -7,7 +7,7 @@ import gnoolson.saturday_plugin_api.LuaModuleFactory;
 public class LuaModuleFactoryImpl implements LuaModuleFactory {
 
     @Override
-    public LuaModule getInstance() {
+    public LuaModule getInstance(String scriptId) {
         return new TimerLuaModule();
     }
 

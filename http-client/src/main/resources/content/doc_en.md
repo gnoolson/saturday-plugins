@@ -1,6 +1,6 @@
 The `http_client` module is used to send HTTP requests.
 
-##### Example
+## Example
 ```lua
 local HttpClient = require("http_client")
 

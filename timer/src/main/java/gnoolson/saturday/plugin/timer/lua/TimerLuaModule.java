@@ -14,9 +14,7 @@ import org.luaj.vm2.lib.ThreeArgFunction;
 import org.luaj.vm2.lib.VarArgFunction;
 import org.luaj.vm2.lib.ZeroArgFunction;
 
-import java.util.Collection;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 public class TimerLuaModule extends LuaModule {
 
@@ -33,6 +31,8 @@ public class TimerLuaModule extends LuaModule {
         set("cancelTaskById", new CancelTaskByIdFunction(this));
         set("cancelTaskByName", new CancelTaskByNameFunction(this));
         set("info", new InfoFunction(this));
+        set("taskExistsById", new TaskExistsById(this));
+        set("taskExistsByName", new TaskExistsByName(this));
     }
 
     @Override
@@ -65,16 +65,29 @@ public class TimerLuaModule extends LuaModule {
             String scriptId = LuaArgUtils.getStringFromFunctionArgs(LuaArgUtils.getLuaValueFromFunctionVarargs(param, 3, "scriptId"), 3, "scriptId");
             LuaTable argsLuaTable = LuaArgUtils.getLuaTableFromFunctionArgs(LuaArgUtils.getLuaValueFromFunctionVarargs(param, 4, "args"), 4, "args");
 
-            Map<String, Object> args = (Map) LuaTypeConverter.toObject(argsLuaTable);
 
             UUID id = timerLuaModule.timer.createTask(
                     name,
                     delay,
                     scriptId,
-                    args
+                    extractArgs(argsLuaTable)
             );
 
             return LuaString.valueOf(id.toString());
+        }
+
+        private Map<String, Object> extractArgs(LuaTable argsLuaTable) {
+            Object object = LuaTypeConverter.toObject(argsLuaTable);
+
+            if (object instanceof Map) {
+                return (Map<String, Object>) object;
+            } else if (object instanceof List) {
+                List list = (List) object;
+                if (list.isEmpty()) { // empty list is an empty table
+                    return new HashMap<>(0);
+                }
+            }
+            throw new RuntimeException("The args must be a table (not as an array).");
         }
 
     }
@@ -151,5 +164,32 @@ public class TimerLuaModule extends LuaModule {
             return result;
         }
     }
+
+    @RequiredArgsConstructor
+    public static class TaskExistsByName extends OneArgFunction {
+
+        private final TimerLuaModule timerLuaModule;
+
+        @Override
+        public LuaValue call(LuaValue taskNameLuaValue) {
+            String taskName = LuaArgUtils.getStringFromFunctionArgs(taskNameLuaValue, 1, "taskName");
+            boolean result = timerLuaModule.timer.existsByName(taskName);
+            return LuaBoolean.valueOf(result);
+        }
+    }
+
+    @RequiredArgsConstructor
+    public static class TaskExistsById extends OneArgFunction {
+
+        private final TimerLuaModule timerLuaModule;
+
+        @Override
+        public LuaValue call(LuaValue taskNameLuaValue) {
+            String taskId = LuaArgUtils.getStringFromFunctionArgs(taskNameLuaValue, 1, "taskId");
+            boolean result = timerLuaModule.timer.existsById(taskId);
+            return LuaBoolean.valueOf(result);
+        }
+    }
+
 
 }

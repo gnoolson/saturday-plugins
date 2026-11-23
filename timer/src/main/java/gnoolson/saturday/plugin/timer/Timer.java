@@ -20,4 +20,8 @@ public interface Timer extends Functionality {
 
     boolean cancelTaskByName(String name);
 
+    boolean existsByName(String name);
+
+    boolean existsById(String taskId);
+
 }

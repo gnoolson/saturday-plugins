@@ -1,6 +1,6 @@
 Модуль `http_client` використовується для виконання HTTP-запитів.
 
-##### Приклад
+## Приклад
 ```lua
 local HttpClient = require("http_client")
 

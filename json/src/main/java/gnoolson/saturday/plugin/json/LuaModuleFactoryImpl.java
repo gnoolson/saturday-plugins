@@ -13,7 +13,7 @@ public class LuaModuleFactoryImpl implements LuaModuleFactory {
      *
      * */
     @Override
-    public LuaModule getInstance() {
+    public LuaModule getInstance(String scriptId) {
         return jsonLuaModule;
     }
 

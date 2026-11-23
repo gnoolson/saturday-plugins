@@ -1,5 +1,5 @@
 <div class="pb-5">
-    <a href="/plugin/cache" role="button" class="secondary">Ключі</a>
+    <a href="/plugin/cache">Ключі</a>
 </div>
 
 
@@ -7,7 +7,7 @@
 
 Після завершення часу зберігання дані автоматично видаляються.
 
-##### Приклад
+## Приклад
 ```lua
 local Cache = require("cache")
 
